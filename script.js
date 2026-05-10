@@ -1,53 +1,65 @@
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════
    ABHISHEK THAKUR — Portfolio Script
-═══════════════════════════════════════════ */
+   All bugs fixed:
+   - Cursor always works
+   - Smooth nav scroll (no jump, no flash)
+   - Hamburger properly opens/closes fullscreen
+   - Floating icons sized to page height
+   - CV download
+   - Form feedback
+═══════════════════════════════════════ */
 
-/* ── CURSOR ──────────────────────────────── */
-(function initCursor() {
+/* ── CURSOR ─────────────────────────── */
+(function () {
   const dot  = document.getElementById('cursor-dot');
   const ring = document.getElementById('cursor-ring');
   if (!dot || !ring) return;
 
-  let mouseX = 0, mouseY = 0;
-  let ringX  = 0, ringY  = 0;
-  let rafId;
+  let mx = 0, my = 0, rx = 0, ry = 0;
 
-  document.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  });
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
 
-  function loop() {
-    // dot follows immediately
-    dot.style.left = mouseX + 'px';
-    dot.style.top  = mouseY + 'px';
-    // ring lerps smoothly
-    ringX += (mouseX - ringX) * 0.12;
-    ringY += (mouseY - ringY) * 0.12;
-    ring.style.left = ringX + 'px';
-    ring.style.top  = ringY + 'px';
-    rafId = requestAnimationFrame(loop);
-  }
-  loop();
+  (function loop() {
+    dot.style.left = mx + 'px';
+    dot.style.top  = my + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(loop);
+  })();
 
-  // Hover effect on interactive elements
-  const hoverEls = document.querySelectorAll(
-    'a, button, .skill-card, .info-card, .project-card, .cert-card, .contact-link, .value-tags span'
-  );
-  hoverEls.forEach(el => {
+  document.querySelectorAll(
+    'a, button, .skill-card, .info-card, .project-card, .cert-card, .social-btn, .value-tags span'
+  ).forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
   });
 })();
 
 
-/* ── PARTICLES ───────────────────────────── */
-(function initParticles() {
+/* ── FLOATING TECH FIELD HEIGHT ──────── */
+/* Icons use position:absolute top:Npx — we need the wrapper
+   to be as tall as the whole page so they land in the right spots */
+(function () {
+  function setFieldHeight() {
+    const field = document.querySelector('.tech-float-field');
+    if (!field) return;
+    field.style.height = document.documentElement.scrollHeight + 'px';
+  }
+  setFieldHeight();
+  window.addEventListener('resize', setFieldHeight);
+  // Re-run after fonts/images load
+  window.addEventListener('load', setFieldHeight);
+})();
+
+
+/* ── PARTICLES ───────────────────────── */
+(function () {
   const canvas = document.getElementById('particle-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-
-  let W, H, particles = [];
+  let W, H;
 
   function resize() {
     W = canvas.width  = window.innerWidth;
@@ -56,68 +68,55 @@
   resize();
   window.addEventListener('resize', resize);
 
-  function makeParticle() {
+  const pts = Array.from({ length: 90 }, () => mkPt());
+  function mkPt() {
     return {
-      x: Math.random() * W,
-      y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.28,
-      vy: (Math.random() - 0.5) * 0.28,
-      r:  Math.random() * 1.4 + 0.4,
-      a:  Math.random() * 0.35 + 0.08,
-      life: Math.random() * 280 + 180,
+      x: Math.random() * (W || window.innerWidth),
+      y: Math.random() * (H || window.innerHeight),
+      vx: (Math.random() - .5) * .25,
+      vy: (Math.random() - .5) * .25,
+      r:  Math.random() * 1.3 + .4,
+      a:  Math.random() * .3  + .08,
+      life: Math.random() * 260 + 180,
       age: 0
     };
   }
 
-  for (let i = 0; i < 110; i++) particles.push(makeParticle());
-
-  function draw() {
+  (function draw() {
     ctx.clearRect(0, 0, W, H);
-
-    particles.forEach(p => {
-      p.x  += p.vx;
-      p.y  += p.vy;
-      p.age++;
-
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.age++;
       if (p.age > p.life || p.x < 0 || p.x > W || p.y < 0 || p.y > H) {
-        Object.assign(p, makeParticle());
-        return;
+        Object.assign(p, mkPt()); return;
       }
-
-      const fade = Math.min(p.age / 30, (p.life - p.age) / 30, 1);
-      ctx.globalAlpha = p.a * fade;
-      ctx.fillStyle   = '#63d7ff';
+      const f = Math.min(p.age / 30, (p.life - p.age) / 30, 1);
+      ctx.globalAlpha = p.a * f;
+      ctx.fillStyle = '#63d7ff';
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fill();
     });
-
-    // Connection lines
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const d  = Math.sqrt(dx * dx + dy * dy);
-        if (d < 115) {
-          ctx.globalAlpha = (1 - d / 115) * 0.055;
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
+        if (d < 110) {
+          ctx.globalAlpha = (1 - d / 110) * .05;
           ctx.strokeStyle = '#63d7ff';
-          ctx.lineWidth   = 0.5;
+          ctx.lineWidth = .5;
           ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
           ctx.stroke();
         }
       }
     }
-
     requestAnimationFrame(draw);
-  }
-  draw();
+  })();
 })();
 
 
-/* ── NAVBAR SCROLL ───────────────────────── */
-(function initNavbar() {
+/* ── NAVBAR SCROLL EFFECT ─────────────── */
+(function () {
   const nav = document.getElementById('navbar');
   if (!nav) return;
   window.addEventListener('scroll', () => {
@@ -126,299 +125,198 @@
 })();
 
 
-/* ── HAMBURGER / MOBILE MENU ─────────────── */
-(function initMobileMenu() {
-  const btn     = document.getElementById('hamburger');
-  const overlay = document.getElementById('mobileOverlay');
-  if (!btn || !overlay) return;
+/* ── SMOOTH NAV SCROLL — professional transition ──
+   No page flash. Instant section switch like
+   Amazon/Flipkart: smooth ease-in-out, navbar
+   stays fixed and visible throughout.
+─────────────────────────────────────────────── */
+(function () {
+  // Intercept ALL anchor clicks that point to #section
+  document.addEventListener('click', e => {
+    const link = e.target.closest('a[href^="#"]');
+    if (!link) return;
 
-  let isOpen = false;
+    const id = link.getAttribute('href');
+    if (!id || id === '#') return;
 
-  function openMenu() {
-    isOpen = true;
-    btn.classList.add('open');
-    overlay.classList.add('open');
-    btn.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-  }
+    const target = document.querySelector(id);
+    if (!target) return;
 
-  function closeMenu() {
-    isOpen = false;
-    btn.classList.remove('open');
-    overlay.classList.remove('open');
-    btn.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-  }
+    e.preventDefault();
 
-  btn.addEventListener('click', () => isOpen ? closeMenu() : openMenu());
+    // Close mobile menu if open
+    closeMobileMenu();
 
-  // Close on any link click
-  overlay.querySelectorAll('.mob-link').forEach(link => {
-    link.addEventListener('click', closeMenu);
-  });
+    // Smooth scroll — native, but with a custom duration via JS
+    const start    = window.scrollY;
+    const end      = target.getBoundingClientRect().top + window.scrollY - 70; // 70 = nav height offset
+    const distance = end - start;
+    const duration = Math.min(Math.max(Math.abs(distance) * 0.5, 400), 900); // 400–900ms
+    let startTime  = null;
 
-  // Close on Escape
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && isOpen) closeMenu();
+    function easeInOutCubic(t) {
+      return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed  = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      window.scrollTo(0, start + distance * easeInOutCubic(progress));
+      if (progress < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
   });
 })();
 
 
-/* ── TYPEWRITER ──────────────────────────── */
-(function initTypewriter() {
+/* ── HAMBURGER / MOBILE MENU ─────────── */
+let menuOpen = false;
+
+function closeMobileMenu() {
+  if (!menuOpen) return;
+  menuOpen = false;
+  const btn = document.getElementById('hamburger');
+  const ov  = document.getElementById('mobileOverlay');
+  if (btn) { btn.classList.remove('open'); btn.setAttribute('aria-expanded','false'); }
+  if (ov)  { ov.classList.remove('open');  ov.setAttribute('aria-hidden','true'); }
+  document.body.style.overflow = '';
+}
+
+(function () {
+  const btn  = document.getElementById('hamburger');
+  const ov   = document.getElementById('mobileOverlay');
+  const cls  = document.getElementById('mobClose');
+  if (!btn || !ov) return;
+
+  btn.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    btn.classList.toggle('open', menuOpen);
+    ov.classList.toggle('open',  menuOpen);
+    btn.setAttribute('aria-expanded', String(menuOpen));
+    ov.setAttribute('aria-hidden',    String(!menuOpen));
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+  });
+
+  if (cls) cls.addEventListener('click', closeMobileMenu);
+
+  // mob-links close the menu (smooth scroll handled by the global listener above)
+  ov.querySelectorAll('.mob-link').forEach(l => l.addEventListener('click', closeMobileMenu));
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMobileMenu(); });
+})();
+
+
+/* ── TYPEWRITER ──────────────────────── */
+(function () {
   const el = document.getElementById('typed-role');
   if (!el) return;
-
-  const phrases = [
-    'Game Developer',
-    'UX Designer',
-    'C++ Engineer',
-    'Unity Creator',
-    'Backend Developer',
-    'Creative Technologist'
-  ];
-
-  let phraseIdx = 0;
-  let charIdx   = 0;
-  let deleting  = false;
+  const phrases = ['Game Developer','UX Designer','C++ Engineer','Unity Creator','Backend Developer','Creative Technologist'];
+  let pi = 0, ci = 0, del = false;
 
   function type() {
-    const current = phrases[phraseIdx];
-
-    if (!deleting) {
-      el.textContent = current.slice(0, charIdx + 1);
-      charIdx++;
-      if (charIdx === current.length) {
-        deleting = true;
-        setTimeout(type, 1800);
-        return;
-      }
-    } else {
-      el.textContent = current.slice(0, charIdx - 1);
-      charIdx--;
-      if (charIdx === 0) {
-        deleting = false;
-        phraseIdx = (phraseIdx + 1) % phrases.length;
-      }
-    }
-    setTimeout(type, deleting ? 50 : 92);
+    const w = phrases[pi];
+    el.textContent = del ? w.slice(0, --ci) : w.slice(0, ++ci);
+    if (!del && ci === w.length) { del = true; setTimeout(type, 1800); return; }
+    if (del  && ci === 0)       { del = false; pi = (pi+1) % phrases.length; }
+    setTimeout(type, del ? 48 : 90);
   }
   type();
 })();
 
 
-/* ── SCROLL REVEAL ───────────────────────── */
-(function initReveal() {
+/* ── SCROLL REVEAL ───────────────────── */
+(function () {
   const els = document.querySelectorAll('.reveal');
   if (!els.length) return;
-
-  const observer = new IntersectionObserver(
-    entries => entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        // Optional: stop observing once visible
-        // observer.unobserve(e.target);
-      }
-    }),
+  const obs = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
     { threshold: 0.1 }
   );
-
-  els.forEach(el => observer.observe(el));
+  els.forEach(el => obs.observe(el));
 })();
 
 
-/* ── STAT COUNTERS ───────────────────────── */
-(function initCounters() {
-  const statsRow = document.querySelector('.hero-stats');
-  if (!statsRow) return;
-
-  function animateCount(el, target, suffix) {
+/* ── STAT COUNTERS ───────────────────── */
+(function () {
+  const row = document.querySelector('.hero-stats');
+  if (!row) return;
+  function count(el, target, suffix) {
+    let c = 0;
     const step = Math.max(1, Math.ceil(target / 40));
-    let current = 0;
-    const timer = setInterval(() => {
-      current = Math.min(current + step, target);
-      el.textContent = current + suffix;
-      if (current >= target) clearInterval(timer);
+    const t = setInterval(() => {
+      c = Math.min(c + step, target);
+      el.textContent = c + suffix;
+      if (c >= target) clearInterval(t);
     }, 40);
   }
-
-  const observer = new IntersectionObserver(
-    entries => entries.forEach(e => {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
       if (e.isIntersecting) {
-        e.target.querySelectorAll('.stat-num').forEach(num => {
-          animateCount(num, parseInt(num.dataset.target), num.dataset.suffix || '');
-        });
-        observer.unobserve(e.target);
+        e.target.querySelectorAll('.stat-num').forEach(n =>
+          count(n, parseInt(n.dataset.target), n.dataset.suffix || ''));
+        obs.unobserve(e.target);
       }
-    }),
-    { threshold: 0.5 }
-  );
-  observer.observe(statsRow);
+    });
+  }, { threshold: .5 });
+  obs.observe(row);
 })();
 
 
-/* ── SKILL CARD SPOTLIGHT ────────────────── */
-(function initSpotlight() {
+/* ── SKILL CARD SPOTLIGHT ─────────────── */
+(function () {
   document.querySelectorAll('.skill-card').forEach(card => {
     card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width  * 100).toFixed(1) + '%';
-      const y = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%';
-      card.style.setProperty('--mx', x);
-      card.style.setProperty('--my', y);
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', ((e.clientX - r.left) / r.width  * 100).toFixed(1) + '%');
+      card.style.setProperty('--my', ((e.clientY - r.top)  / r.height * 100).toFixed(1) + '%');
     });
   });
 })();
 
 
-/* ── PROFILE CARD 3-D TILT ───────────────── */
-(function initTilt() {
+/* ── PROFILE CARD TILT ───────────────── */
+(function () {
   const card = document.getElementById('profileCard');
   if (!card) return;
-
   document.addEventListener('mousemove', e => {
-    const rect = card.getBoundingClientRect();
-    if (rect.width === 0) return;  // card hidden on mobile
-    const cx = rect.left + rect.width  / 2;
-    const cy = rect.top  + rect.height / 2;
-    const dx = (e.clientX - cx) / (window.innerWidth  / 2);
-    const dy = (e.clientY - cy) / (window.innerHeight / 2);
-    card.style.transform = `perspective(1000px) rotateY(${dx * 7}deg) rotateX(${-dy * 7}deg)`;
+    const r = card.getBoundingClientRect();
+    if (r.width === 0) return;
+    const dx = (e.clientX - (r.left + r.width/2))  / (window.innerWidth/2);
+    const dy = (e.clientY - (r.top  + r.height/2)) / (window.innerHeight/2);
+    card.style.transform = `perspective(1000px) rotateY(${dx*7}deg) rotateX(${-dy*7}deg)`;
   });
-
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = '';
-  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
 })();
 
 
-/* ── CONTACT FORM ────────────────────────── */
-(function initForm() {
+/* ── CONTACT FORM ────────────────────── */
+(function () {
   const form = document.getElementById('contact-form');
   const fb   = document.getElementById('form-feedback');
   if (!form || !fb) return;
-
   form.addEventListener('submit', e => {
     e.preventDefault();
     fb.textContent = '✓ Message sent! I\'ll get back to you soon.';
-    fb.style.color  = 'var(--green)';
+    fb.style.color = 'var(--green)';
     form.reset();
     setTimeout(() => { fb.textContent = ''; }, 5000);
   });
 })();
 
 
-/* ── LEETCODE LIVE STATS ─────────────────── */
-(function initLeetCode() {
-  // ── SET YOUR USERNAME HERE ──────────────────
-  const DEFAULT_USERNAME = 'your-leetcode-username';
-  // ────────────────────────────────────────────
-
-  const API = 'https://leetcode-stats-api.herokuapp.com/';
-
-  const elLoading  = document.getElementById('lcLoading');
-  const elBody     = document.getElementById('lcBody');
-  const elError    = document.getElementById('lcError');
-  const elDot      = document.getElementById('lcDot');
-  const elUsername = document.getElementById('lcUsernameText');
-  const elTotal    = document.getElementById('lcTotal');
-  const elEasy     = document.getElementById('lcEasy');
-  const elMed      = document.getElementById('lcMed');
-  const elHard     = document.getElementById('lcHard');
-  const elAccept   = document.getElementById('lcAccept');
-  const elRank     = document.getElementById('lcRank');
-  const elEasyBar  = document.getElementById('lcEasyBar');
-  const elMedBar   = document.getElementById('lcMedBar');
-  const elHardBar  = document.getElementById('lcHardBar');
-  const elLink     = document.getElementById('lcProfileLink');
-  const dsaLink    = document.getElementById('dsaLeetcodeLink');
-  const input      = document.getElementById('lcInput');
-  const fetchBtn   = document.getElementById('lcFetch');
-
-  if (!elLoading) return;
-
-  function setLoading() {
-    elLoading.style.display = 'flex';
-    elBody.style.display    = 'none';
-    elError.style.display   = 'none';
-    elDot.className = 'lc-status-dot';
-  }
-
-  function setError() {
-    elLoading.style.display = 'none';
-    elBody.style.display    = 'none';
-    elError.style.display   = 'block';
-    elDot.className = 'lc-status-dot err';
-  }
-
-  function animBar(el, pct) {
-    setTimeout(() => { el.style.width = Math.min(pct, 100) + '%'; }, 300);
-  }
-
-  function fmtRank(n) {
-    if (!n || n === 0) return '—';
-    if (n > 1000000) return (n / 1000000).toFixed(1) + 'M';
-    if (n > 1000)    return (n / 1000).toFixed(1) + 'K';
-    return String(n);
-  }
-
-  async function fetchStats(username) {
-    username = username.trim();
-    if (!username || username === 'your-leetcode-username') { setError(); return; }
-
-    setLoading();
-    elUsername.textContent = username;
-    if (elLink)    elLink.href    = `https://leetcode.com/${username}`;
-    if (dsaLink)   dsaLink.href   = `https://leetcode.com/${username}`;
-
-    try {
-      const res = await fetch(API + username, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) { setError(); return; }
-      const d = await res.json();
-      if (d.status !== 'success') { setError(); return; }
-
-      // Populate
-      elTotal.textContent  = d.totalSolved ?? '—';
-      elEasy.textContent   = d.easySolved  ?? '—';
-      elMed.textContent    = d.mediumSolved ?? '—';
-      elHard.textContent   = d.hardSolved  ?? '—';
-      elAccept.textContent = d.acceptanceRate ? d.acceptanceRate.toFixed(1) + '%' : '—';
-      elRank.textContent   = fmtRank(d.ranking);
-
-      // Progress bars
-      const easyPct   = d.totalEasy   ? (d.easySolved   / d.totalEasy   * 100) : 0;
-      const medPct    = d.totalMedium ? (d.mediumSolved  / d.totalMedium * 100) : 0;
-      const hardPct   = d.totalHard   ? (d.hardSolved   / d.totalHard   * 100) : 0;
-      animBar(elEasyBar, easyPct);
-      animBar(elMedBar,  medPct);
-      animBar(elHardBar, hardPct);
-
-      elLoading.style.display = 'none';
-      elBody.style.display    = 'block';
-      elDot.className = 'lc-status-dot live';
-    } catch {
-      setError();
-    }
-  }
-
-  // Load default on init
-  fetchStats(DEFAULT_USERNAME);
-
-  // Manual fetch via input
-  if (fetchBtn && input) {
-    fetchBtn.addEventListener('click', () => fetchStats(input.value));
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') fetchStats(input.value); });
-  }
-})();
-
-
-(function initCV() {
+/* ── CV DOWNLOAD ─────────────────────── */
+(function () {
   const btn = document.getElementById('cv-btn');
   if (!btn) return;
-  btn.addEventListener('click', e => {
-    e.preventDefault();
-    const original = btn.textContent;
-    btn.textContent = '⏳  Preparing...';
-    setTimeout(() => { btn.textContent = original; }, 1500);
+  // If the href is a real PDF, the browser handles download natively.
+  // This just gives visual feedback.
+  btn.addEventListener('click', () => {
+    const span = btn.querySelector('span');
+    if (!span) return;
+    const orig = span.textContent;
+    span.textContent = '⏳ Preparing…';
+    setTimeout(() => { span.textContent = orig; }, 1600);
   });
 })();

@@ -1,51 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Abhishek Thakur — Game Dev & UX Designer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
-
 <body>
 
-  <!-- Custom Cursor -->
+  <!-- Cursor -->
   <div id="cursor-dot"></div>
   <div id="cursor-ring"></div>
 
-  <!-- Background Layer (always below everything) -->
+  <!-- Page transition overlay -->
+  <div id="page-transition"></div>
+
+  <!-- ═══ BACKGROUND — fixed, z-index:0, pointer-events:none ═══ -->
   <div id="bg-layer" aria-hidden="true">
     <canvas id="particle-canvas"></canvas>
     <div class="grid-overlay"></div>
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
-    <!-- Orbiting Tech Logos -->
-    <div class="orbit-system" id="orbitSystem">
-      <div class="orbit orbit-1">
-        <div class="tech-icon" style="--delay:0s"><span>C++</span></div>
-        <div class="tech-icon" style="--delay:2s"><span>Java</span></div>
-        <div class="tech-icon" style="--delay:4s"><span>Unity</span></div>
-      </div>
-      <div class="orbit orbit-2">
-        <div class="tech-icon" style="--delay:1s"><span>🎮</span></div>
-        <div class="tech-icon" style="--delay:3s"><span>⚛</span></div>
-        <div class="tech-icon" style="--delay:5s"><span>Git</span></div>
-        <div class="tech-icon" style="--delay:7s"><span>Py</span></div>
-      </div>
-      <div class="orbit orbit-3">
-        <div class="tech-icon" style="--delay:0.5s"><span>Figma</span></div>
-        <div class="tech-icon" style="--delay:2.5s"><span>SQL</span></div>
-        <div class="tech-icon" style="--delay:4.5s"><span>JS</span></div>
-        <div class="tech-icon" style="--delay:6.5s"><span>C#</span></div>
-        <div class="tech-icon" style="--delay:8.5s"><span>UX</span></div>
-      </div>
-    </div>
+  </div>
+
+  <!-- ═══ FLOATING TECH ICONS — scroll with page, NOT fixed ═══ -->
+  <div class="tech-float-field" aria-hidden="true">
+    <div class="tf-icon" data-brand="cpp"    style="--tx:6%;   --ty:280px;  --dur:7s;  --del:0s">  <span>C++</span>   </div>
+    <div class="tf-icon" data-brand="java"   style="--tx:88%;  --ty:180px;  --dur:9s;  --del:1s">  <span>Java</span>  </div>
+    <div class="tf-icon" data-brand="unity"  style="--tx:94%;  --ty:520px;  --dur:8s;  --del:2s">  <span>Unity</span> </div>
+    <div class="tf-icon" data-brand="figma"  style="--tx:4%;   --ty:720px;  --dur:10s; --del:0.5s"><span>Figma</span> </div>
+    <div class="tf-icon" data-brand="js"     style="--tx:90%;  --ty:940px;  --dur:7s;  --del:3s">  <span>JS</span>    </div>
+    <div class="tf-icon" data-brand="python" style="--tx:8%;   --ty:1200px; --dur:11s; --del:1.5s"><span>Python</span></div>
+    <div class="tf-icon" data-brand="git"    style="--tx:85%;  --ty:1500px; --dur:8s;  --del:4s">  <span>Git</span>   </div>
+    <div class="tf-icon" data-brand="cs"     style="--tx:92%;  --ty:1800px; --dur:9s;  --del:2.5s"><span>C#</span>    </div>
+    <div class="tf-icon" data-brand="spring" style="--tx:5%;   --ty:2100px; --dur:10s; --del:0.8s"><span>Spring</span></div>
+    <div class="tf-icon" data-brand="django" style="--tx:88%;  --ty:2400px; --dur:12s; --del:3.5s"><span>Django</span></div>
+    <div class="tf-icon" data-brand="sql"    style="--tx:7%;   --ty:2700px; --dur:7s;  --del:1.2s"><span>SQL</span>   </div>
+    <div class="tf-icon" data-brand="ux"     style="--tx:91%;  --ty:3000px; --dur:13s; --del:5s">  <span>UX</span>    </div>
   </div>
 
   <!-- ═══ NAVBAR ═══ -->
@@ -55,28 +49,30 @@
       <li><a href="#home">Home</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#skills">Skills</a></li>
-      <li><a href="#dsa">DSA</a></li>
       <li><a href="#certifications">Certs</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <a href="mailto:abhishekthakur99050@gmail.com" class="nav-hire">Hire Me ↗</a>
+    <a href="mailto:abhishekthakur99050@gmail.com" class="nav-hire">
+      <span>Hire Me ↗</span>
+    </a>
     <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </nav>
 
-  <!-- Mobile Menu Overlay -->
-  <div class="mobile-overlay" id="mobileOverlay">
-    <ul>
-      <li><a href="#home" class="mob-link">Home</a></li>
-      <li><a href="#about" class="mob-link">About</a></li>
-      <li><a href="#skills" class="mob-link">Skills</a></li>
-      <li><a href="#dsa" class="mob-link">DSA</a></li>
-      <li><a href="#certifications" class="mob-link">Certs</a></li>
-      <li><a href="#projects" class="mob-link">Projects</a></li>
-      <li><a href="#contact" class="mob-link">Contact</a></li>
-    </ul>
+  <!-- Mobile Full-screen Menu -->
+  <div class="mobile-overlay" id="mobileOverlay" aria-hidden="true">
+    <button class="mob-close" id="mobClose" aria-label="Close menu">✕</button>
+    <nav class="mob-nav">
+      <a href="#home"           class="mob-link"><span class="mn-num">01</span>Home</a>
+      <a href="#about"          class="mob-link"><span class="mn-num">02</span>About</a>
+      <a href="#skills"         class="mob-link"><span class="mn-num">03</span>Skills</a>
+      <a href="#certifications" class="mob-link"><span class="mn-num">04</span>Certs</a>
+      <a href="#projects"       class="mob-link"><span class="mn-num">05</span>Projects</a>
+      <a href="#contact"        class="mob-link"><span class="mn-num">06</span>Contact</a>
+    </nav>
+    <p class="mob-email">abhishekthakur99050@gmail.com</p>
   </div>
 
   <!-- ═══ HERO ═══ -->
@@ -88,25 +84,23 @@
           <span class="badge-dot"></span>
           Available for opportunities
         </div>
-
         <h1 class="hero-title">
           <span class="hero-line-1">ABHISHEK</span>
           <span class="hero-line-2" data-text="THAKUR">THAKUR</span>
         </h1>
-
         <p class="hero-role"><span id="typed-role"></span></p>
-
-        <p class="hero-desc">
-          Pre-final year <strong>CSE student</strong> specializing in
-          <strong>Game Development & UI/UX</strong>. Crafting interactive
-          experiences with C++, Java, Unity and modern frameworks.
-        </p>
-
+        <p class="hero-desc">Pre-final year <strong>CSE student</strong> specializing in <strong>Game Development & UI/UX</strong>. Crafting interactive experiences with C++, Java, Unity and modern frameworks.</p>
         <div class="hero-actions">
-          <a href="#contact" class="btn-primary">Let's Collaborate ↗</a>
-          <a href="#" id="cv-btn" class="btn-ghost">Download CV ↓</a>
+          <a href="#contact" class="btn-primary">
+            <span>Let's Collaborate</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </a>
+          <!-- CV button: replace href with your actual CV file path -->
+          <a href="Abhishek_Thakur_CV.pdf" download="Abhishek_Thakur_CV.pdf" class="btn-ghost" id="cv-btn">
+            <span>Download CV</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </a>
         </div>
-
         <div class="hero-stats">
           <div class="stat">
             <span class="stat-num" data-target="3" data-suffix="+">0</span>
@@ -126,32 +120,29 @@
       </div>
 
       <div class="hero-right">
-        <div class="profile-card" id="profileCard">
-          <div class="profile-card-glow"></div>
-          <div class="profile-img-area">
-            <div class="profile-emoji">👨‍💻</div>
-            <div class="profile-ring"></div>
-          </div>
-          <div class="profile-info">
-            <p class="profile-name">ABHISHEK THAKUR</p>
-            <p class="profile-subtitle">KL University · B.Tech CSE</p>
-            <div class="profile-pills">
-              <span>Game Dev</span><span>UX</span><span>C++</span><span>Unity</span>
+        <!-- Profile card — chip is OUTSIDE the card so it doesn't clip -->
+        <div class="profile-wrap">
+          <div class="card-chip chip-1"><span>🎮</span><b>Unity</b></div>
+          <div class="card-chip chip-2"><span>✓</span><b>Open to Work</b></div>
+          <div class="profile-card" id="profileCard">
+            <div class="profile-card-glow"></div>
+            <div class="profile-img-area">
+              <div class="profile-emoji">👨‍💻</div>
+              <div class="profile-ring r1"></div>
+              <div class="profile-ring r2"></div>
             </div>
-          </div>
-          <div class="card-chip chip-1">
-            <span class="chip-emoji">🎮</span>
-            <span class="chip-text">Unity</span>
-          </div>
-          <div class="card-chip chip-2">
-            <span class="chip-emoji">✓</span>
-            <span class="chip-text">Open to Work</span>
+            <div class="profile-info">
+              <p class="profile-name">ABHISHEK THAKUR</p>
+              <p class="profile-subtitle">KL University · B.Tech CSE</p>
+              <div class="profile-pills">
+                <span>Game Dev</span><span>UX</span><span>C++</span><span>Unity</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
     </div>
-
     <div class="scroll-hint">
       <div class="scroll-line"></div>
       <span>scroll</span>
@@ -189,174 +180,19 @@
       </div>
       <div class="about-grid">
         <div class="about-text reveal">
-          <p>I'm <strong>Abhishek Thakur</strong> — a pre-final year B.Tech CSE student at KL University, Vijayawada,
-            specializing in <strong>Game Development & UI/UX Design</strong>. I don't just write code. I architect
-            experiences.</p>
-          <p>My edge? I think in <strong>systems</strong>. Whether it's a game mechanic loop that keeps users hooked, a
-            UX flow that removes all friction, or a backend API built for scale — I approach every problem with the same
-            discipline: <em>understand deeply, design precisely, ship confidently</em>.</p>
-          <p>I've shipped real projects, earned an AI certification from Salesforce, and consistently push my
-            problem-solving ability through competitive programming. I'm the developer who doesn't stop at "it works" —
-            I stop at <strong>"it's right."</strong></p>
-          <blockquote class="about-quote">
-            "The best code is the code that makes the next developer smile — clean, purposeful, and invisible to the end
-            user."
-          </blockquote>
+          <p>I'm <strong>Abhishek Thakur</strong> — a pre-final year B.Tech CSE student at KL University, Vijayawada, specializing in <strong>Game Development & UI/UX Design</strong>. I don't just write code. I architect experiences.</p>
+          <p>My edge? I think in <strong>systems</strong>. Whether it's a game mechanic loop that keeps users hooked, a UX flow that removes all friction, or a backend API built for scale — I approach every problem with the same discipline: <em>understand deeply, design precisely, ship confidently</em>.</p>
+          <p>I've shipped real projects, earned an AI certification from Salesforce, and consistently push my problem-solving ability through competitive programming. I'm the developer who doesn't stop at "it works" — I stop at <strong>"it's right."</strong></p>
+          <blockquote class="about-quote">"The best code is the code that makes the next developer smile — clean, purposeful, and invisible to the end user."</blockquote>
           <div class="value-tags">
-            <span>Systems
-              Thinking</span><span>Ownership</span><span>Precision</span><span>Curiosity</span><span>Craft</span>
+            <span>Systems Thinking</span><span>Ownership</span><span>Precision</span><span>Curiosity</span><span>Craft</span>
           </div>
         </div>
         <div class="about-cards reveal delay-2">
-          <div class="info-card"><span class="ic-icon">🎓</span>
-            <div>
-              <p class="ic-label">Education</p>
-              <p class="ic-value">KL University, Vijayawada<br><small>B.Tech CSE — Game Dev & UX</small></p>
-            </div>
-          </div>
-          <div class="info-card"><span class="ic-icon">✉️</span>
-            <div>
-              <p class="ic-label">Email</p>
-              <p class="ic-value">abhishekthakur99050@gmail.com</p>
-            </div>
-          </div>
-          <div class="info-card"><span class="ic-icon">🔭</span>
-            <div>
-              <p class="ic-label">Currently Exploring</p>
-              <p class="ic-value">Procedural Generation & AR/VR Design</p>
-            </div>
-          </div>
-          <div class="info-card status-open"><span class="ic-icon">⚡</span>
-            <div>
-              <p class="ic-label">Status</p>
-              <p class="ic-value" style="color:var(--green)">Open to internships & collaborations</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ DSA / LEETCODE ═══ -->
-  <section id="dsa" class="section section-base">
-    <div class="container">
-      <div class="section-header reveal">
-        <p class="eyebrow">// problem solving</p>
-        <h2 class="section-title">DSA & <span>COMPETITIVE CODING</span></h2>
-        <p class="section-sub">Algorithms are how I think. LeetCode is where I prove it.</p>
-      </div>
-
-      <div class="dsa-layout">
-        <!-- Left: LeetCode live widget -->
-        <div class="lc-card reveal" id="lcCard">
-          <div class="lc-header">
-            <div class="lc-logo">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H19.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z"
-                  fill="#FFA116" />
-              </svg>
-              <span>LeetCode</span>
-            </div>
-            <div class="lc-username" id="lcUsername">
-              <span class="lc-u-label">@</span><span id="lcUsernameText">your-username</span>
-            </div>
-            <div class="lc-status-dot" id="lcDot"></div>
-          </div>
-
-          <div class="lc-loading" id="lcLoading">
-            <div class="lc-spinner"></div>
-            <span>Fetching live stats…</span>
-          </div>
-
-          <div class="lc-body" id="lcBody" style="display:none">
-            <div class="lc-total-row">
-              <div class="lc-total-num" id="lcTotal">—</div>
-              <div class="lc-total-label">Problems Solved</div>
-              <a href="#" id="lcProfileLink" target="_blank" rel="noopener" class="lc-visit">View Profile ↗</a>
-            </div>
-
-            <div class="lc-bars">
-              <div class="lc-bar-row">
-                <span class="lc-diff easy">Easy</span>
-                <div class="lc-track">
-                  <div class="lc-fill lc-fill-easy" id="lcEasyBar"></div>
-                </div>
-                <span class="lc-count" id="lcEasy">—</span>
-              </div>
-              <div class="lc-bar-row">
-                <span class="lc-diff medium">Med</span>
-                <div class="lc-track">
-                  <div class="lc-fill lc-fill-med" id="lcMedBar"></div>
-                </div>
-                <span class="lc-count" id="lcMed">—</span>
-              </div>
-              <div class="lc-bar-row">
-                <span class="lc-diff hard">Hard</span>
-                <div class="lc-track">
-                  <div class="lc-fill lc-fill-hard" id="lcHardBar"></div>
-                </div>
-                <span class="lc-count" id="lcHard">—</span>
-              </div>
-            </div>
-
-            <div class="lc-meta">
-              <div class="lc-meta-item">
-                <p class="lc-meta-label">Acceptance</p>
-                <p class="lc-meta-val" id="lcAccept">—</p>
-              </div>
-              <div class="lc-meta-item">
-                <p class="lc-meta-label">Global Rank</p>
-                <p class="lc-meta-val" id="lcRank">—</p>
-              </div>
-              <div class="lc-meta-item">
-                <p class="lc-meta-label">Streak</p>
-                <p class="lc-meta-val lc-streak" id="lcStreak">Active 🔥</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="lc-error" id="lcError" style="display:none">
-            <p>⚠️ Could not load stats. <a href="https://leetcode.com" target="_blank">Visit LeetCode ↗</a></p>
-          </div>
-
-          <!-- Username config -->
-          <div class="lc-config">
-            <input id="lcInput" type="text" placeholder="Enter your LeetCode username" />
-            <button id="lcFetch">Load ↗</button>
-          </div>
-        </div>
-
-        <!-- Right: DSA topics grid -->
-        <div class="dsa-right reveal delay-2">
-          <p class="dsa-intro">Strong foundation in core computer science — the kind that makes the difference in
-            technical rounds.</p>
-          <div class="dsa-topics">
-            <div class="dsa-topic"><span class="dt-icon">🌲</span><span class="dt-name">Trees & Graphs</span><span
-                class="dt-level strong">Strong</span></div>
-            <div class="dsa-topic"><span class="dt-icon">⚡</span><span class="dt-name">Dynamic Programming</span><span
-                class="dt-level growing">Growing</span></div>
-            <div class="dsa-topic"><span class="dt-icon">🔍</span><span class="dt-name">Binary Search</span><span
-                class="dt-level strong">Strong</span></div>
-            <div class="dsa-topic"><span class="dt-icon">📚</span><span class="dt-name">Arrays & Strings</span><span
-                class="dt-level strong">Strong</span></div>
-            <div class="dsa-topic"><span class="dt-icon">🔗</span><span class="dt-name">Linked Lists</span><span
-                class="dt-level strong">Strong</span></div>
-            <div class="dsa-topic"><span class="dt-icon">🪣</span><span class="dt-name">Hashing & Maps</span><span
-                class="dt-level strong">Strong</span></div>
-            <div class="dsa-topic"><span class="dt-icon">↩️</span><span class="dt-name">Recursion &
-                Backtracking</span><span class="dt-level growing">Growing</span></div>
-            <div class="dsa-topic"><span class="dt-icon">🗂️</span><span class="dt-name">Stacks & Queues</span><span
-                class="dt-level strong">Strong</span></div>
-          </div>
-          <a href="https://leetcode.com" target="_blank" rel="noopener" class="dsa-link" id="dsaLeetcodeLink">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H19.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z"
-                fill="#FFA116" />
-            </svg>
-            See my LeetCode profile
-          </a>
+          <div class="info-card"><span class="ic-icon">🎓</span><div><p class="ic-label">Education</p><p class="ic-value">KL University, Vijayawada<br><small>B.Tech CSE — Game Dev & UX</small></p></div></div>
+          <div class="info-card"><span class="ic-icon">✉️</span><div><p class="ic-label">Email</p><p class="ic-value">abhishekthakur99050@gmail.com</p></div></div>
+          <div class="info-card"><span class="ic-icon">🔭</span><div><p class="ic-label">Currently Exploring</p><p class="ic-value">Procedural Generation & AR/VR Design</p></div></div>
+          <div class="info-card"><span class="ic-icon">⚡</span><div><p class="ic-label">Status</p><p class="ic-value" style="color:var(--green)">Open to internships & collaborations</p></div></div>
         </div>
       </div>
     </div>
@@ -371,38 +207,12 @@
         <p class="section-sub">Technologies & frameworks I use to bring ideas to life.</p>
       </div>
       <div class="skills-grid">
-        <div class="skill-card reveal">
-          <div class="sk-icon">⚙️</div>
-          <h3>Languages</h3>
-          <div class="sk-tags"><span>C++</span><span>Java</span><span>Python</span><span>C#</span><span>SQL</span></div>
-        </div>
-        <div class="skill-card reveal delay-1">
-          <div class="sk-icon">🎮</div>
-          <h3>Game Dev</h3>
-          <div class="sk-tags"><span>Unity</span><span>Game Design</span><span>Level Design</span><span>Mechanics</span>
-          </div>
-        </div>
-        <div class="skill-card reveal delay-2">
-          <div class="sk-icon">🎨</div>
-          <h3>UX & Design</h3>
-          <div class="sk-tags"><span>Figma</span><span>UX
-              Research</span><span>Prototyping</span><span>Wireframing</span></div>
-        </div>
-        <div class="skill-card reveal">
-          <div class="sk-icon">🛠️</div>
-          <h3>Backend</h3>
-          <div class="sk-tags"><span>Spring Boot</span><span>Django</span><span>REST APIs</span><span>MySQL</span></div>
-        </div>
-        <div class="skill-card reveal delay-1">
-          <div class="sk-icon">🔧</div>
-          <h3>Dev Tools</h3>
-          <div class="sk-tags"><span>Git</span><span>GitHub</span><span>VS Code</span><span>IntelliJ</span></div>
-        </div>
-        <div class="skill-card reveal delay-2">
-          <div class="sk-icon">☁️</div>
-          <h3>Platform</h3>
-          <div class="sk-tags"><span>Salesforce AI</span><span>OOP</span><span>Agile</span><span>Testing</span></div>
-        </div>
+        <div class="skill-card reveal">        <div class="sk-icon">⚙️</div><h3>Languages</h3> <div class="sk-tags"><span>C++</span><span>Java</span><span>Python</span><span>C#</span><span>SQL</span></div></div>
+        <div class="skill-card reveal delay-1"><div class="sk-icon">🎮</div><h3>Game Dev</h3>  <div class="sk-tags"><span>Unity</span><span>Game Design</span><span>Level Design</span><span>Mechanics</span></div></div>
+        <div class="skill-card reveal delay-2"><div class="sk-icon">🎨</div><h3>UX & Design</h3><div class="sk-tags"><span>Figma</span><span>UX Research</span><span>Prototyping</span><span>Wireframing</span></div></div>
+        <div class="skill-card reveal">        <div class="sk-icon">🛠️</div><h3>Backend</h3>   <div class="sk-tags"><span>Spring Boot</span><span>Django</span><span>REST APIs</span><span>MySQL</span></div></div>
+        <div class="skill-card reveal delay-1"><div class="sk-icon">🔧</div><h3>Dev Tools</h3>  <div class="sk-tags"><span>Git</span><span>GitHub</span><span>VS Code</span><span>IntelliJ</span></div></div>
+        <div class="skill-card reveal delay-2"><div class="sk-icon">☁️</div><h3>Platform</h3>   <div class="sk-tags"><span>Salesforce AI</span><span>OOP</span><span>Agile</span><span>Testing</span></div></div>
       </div>
     </div>
   </section>
@@ -421,8 +231,7 @@
           <div class="cert-icon-wrap">☁️</div>
           <p class="cert-year">2024 · Salesforce</p>
           <h3 class="cert-name">SALESFORCE AI ASSOCIATE</h3>
-          <p class="cert-desc">Foundational certification covering AI concepts, ethical considerations, and Salesforce's
-            Einstein AI platform capabilities.</p>
+          <p class="cert-desc">Foundational certification covering AI concepts, ethical considerations, and Salesforce's Einstein AI platform capabilities.</p>
           <div class="cert-shine"></div>
         </div>
         <div class="cert-card reveal delay-1">
@@ -430,8 +239,7 @@
           <div class="cert-icon-wrap">🎮</div>
           <p class="cert-year">KL University</p>
           <h3 class="cert-name">GAME DESIGN SPECIALIZATION</h3>
-          <p class="cert-desc">Comprehensive specialization in game design theory, mechanics, playtesting methodologies,
-            and interactive narrative construction.</p>
+          <p class="cert-desc">Comprehensive specialization in game design theory, mechanics, playtesting methodologies, and interactive narrative construction.</p>
           <div class="cert-shine"></div>
         </div>
       </div>
@@ -455,8 +263,7 @@
           </div>
           <div class="proj-body">
             <h3 class="proj-name">MAYAVI GAME FEST</h3>
-            <p class="proj-desc">Designed and built a club event game — led UI integration, coordinated playtesting
-              sessions, delivered a polished interactive experience for festival attendees.</p>
+            <p class="proj-desc">Designed and built a club event game — led UI integration, coordinated playtesting sessions, delivered a polished interactive experience for festival attendees.</p>
             <div class="proj-tags"><span>Unity</span><span>C#</span><span>UI Design</span><span>QA Testing</span></div>
           </div>
         </div>
@@ -468,10 +275,8 @@
           </div>
           <div class="proj-body">
             <h3 class="proj-name">SMART VILLAGE</h3>
-            <p class="proj-desc">Research-driven project exploring tech adoption barriers in rural India. Designed
-              accessible, low-bandwidth solutions with hands-on community user research.</p>
-            <div class="proj-tags"><span>UX Research</span><span>Figma</span><span>Django</span><span>Solution
-                Design</span></div>
+            <p class="proj-desc">Research-driven project exploring tech adoption barriers in rural India. Designed accessible, low-bandwidth solutions with hands-on community user research.</p>
+            <div class="proj-tags"><span>UX Research</span><span>Figma</span><span>Django</span><span>Solution Design</span></div>
           </div>
         </div>
       </div>
@@ -490,57 +295,38 @@
 
           <div class="contact-socials">
             <a href="https://www.linkedin.com/in/abhishek-thakur-00268a259/" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                <rect x="2" y="9" width="4" height="12" />
-                <circle cx="4" cy="4" r="2" />
-              </svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
               <span class="sb-tooltip">LinkedIn</span>
             </a>
             <a href="https://github.com/Abhithakur969" target="_blank" rel="noopener" class="social-btn" aria-label="GitHub">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path
-                  d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-                <path d="M9 18c-4.51 2-5-2-7-2" />
-              </svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
               <span class="sb-tooltip">GitHub</span>
             </a>
             <a href="https://leetcode.com/u/abhishekthakur969/" target="_blank" rel="noopener" class="social-btn" aria-label="LeetCode">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 7 4 12l5 5" />
-                <path d="M15 7l5 5-5 5" />
-                <path d="M8 12h8" />
-              </svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4 12l5 5"/><path d="M15 7l5 5-5 5"/><path d="M8 12h8"/></svg>
               <span class="sb-tooltip">LeetCode</span>
             </a>
           </div>
 
           <div class="contact-divider"></div>
-
-
+          <p class="contact-email-text">
+          </p>
         </div>
 
         <div class="contact-right reveal delay-2">
           <form id="contact-form">
             <div class="form-group">
-              <input type="text" placeholder="Your Name" required />
+              <input type="text" placeholder="Your Name" required/>
             </div>
             <div class="form-group">
-              <input type="email" placeholder="Your Email" required />
+              <input type="email" placeholder="Your Email" required/>
             </div>
             <div class="form-group">
               <textarea rows="5" placeholder="Your Message"></textarea>
             </div>
             <button type="submit" class="contact-submit-btn">
-              Send Message
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13" />
-                <polygon points="22 2 15 22 11 13 2 9 22 2" />
-              </svg>
+              <span>Send Message</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
             <p id="form-feedback"></p>
           </form>
@@ -554,11 +340,9 @@
   <footer>
     <div class="container footer-inner">
       <p class="footer-left">© 2026 <span>Abhishek Thakur</span> — Designed with intention</p>
-
     </div>
   </footer>
 
   <script src="script.js"></script>
 </body>
-
 </html>
