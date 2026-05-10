@@ -308,7 +308,110 @@
 })();
 
 
-/* ── CV DOWNLOAD BTN ─────────────────────── */
+/* ── LEETCODE LIVE STATS ─────────────────── */
+(function initLeetCode() {
+  // ── SET YOUR USERNAME HERE ──────────────────
+  const DEFAULT_USERNAME = 'your-leetcode-username';
+  // ────────────────────────────────────────────
+
+  const API = 'https://leetcode-stats-api.herokuapp.com/';
+
+  const elLoading  = document.getElementById('lcLoading');
+  const elBody     = document.getElementById('lcBody');
+  const elError    = document.getElementById('lcError');
+  const elDot      = document.getElementById('lcDot');
+  const elUsername = document.getElementById('lcUsernameText');
+  const elTotal    = document.getElementById('lcTotal');
+  const elEasy     = document.getElementById('lcEasy');
+  const elMed      = document.getElementById('lcMed');
+  const elHard     = document.getElementById('lcHard');
+  const elAccept   = document.getElementById('lcAccept');
+  const elRank     = document.getElementById('lcRank');
+  const elEasyBar  = document.getElementById('lcEasyBar');
+  const elMedBar   = document.getElementById('lcMedBar');
+  const elHardBar  = document.getElementById('lcHardBar');
+  const elLink     = document.getElementById('lcProfileLink');
+  const dsaLink    = document.getElementById('dsaLeetcodeLink');
+  const input      = document.getElementById('lcInput');
+  const fetchBtn   = document.getElementById('lcFetch');
+
+  if (!elLoading) return;
+
+  function setLoading() {
+    elLoading.style.display = 'flex';
+    elBody.style.display    = 'none';
+    elError.style.display   = 'none';
+    elDot.className = 'lc-status-dot';
+  }
+
+  function setError() {
+    elLoading.style.display = 'none';
+    elBody.style.display    = 'none';
+    elError.style.display   = 'block';
+    elDot.className = 'lc-status-dot err';
+  }
+
+  function animBar(el, pct) {
+    setTimeout(() => { el.style.width = Math.min(pct, 100) + '%'; }, 300);
+  }
+
+  function fmtRank(n) {
+    if (!n || n === 0) return '—';
+    if (n > 1000000) return (n / 1000000).toFixed(1) + 'M';
+    if (n > 1000)    return (n / 1000).toFixed(1) + 'K';
+    return String(n);
+  }
+
+  async function fetchStats(username) {
+    username = username.trim();
+    if (!username || username === 'your-leetcode-username') { setError(); return; }
+
+    setLoading();
+    elUsername.textContent = username;
+    if (elLink)    elLink.href    = `https://leetcode.com/${username}`;
+    if (dsaLink)   dsaLink.href   = `https://leetcode.com/${username}`;
+
+    try {
+      const res = await fetch(API + username, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) { setError(); return; }
+      const d = await res.json();
+      if (d.status !== 'success') { setError(); return; }
+
+      // Populate
+      elTotal.textContent  = d.totalSolved ?? '—';
+      elEasy.textContent   = d.easySolved  ?? '—';
+      elMed.textContent    = d.mediumSolved ?? '—';
+      elHard.textContent   = d.hardSolved  ?? '—';
+      elAccept.textContent = d.acceptanceRate ? d.acceptanceRate.toFixed(1) + '%' : '—';
+      elRank.textContent   = fmtRank(d.ranking);
+
+      // Progress bars
+      const easyPct   = d.totalEasy   ? (d.easySolved   / d.totalEasy   * 100) : 0;
+      const medPct    = d.totalMedium ? (d.mediumSolved  / d.totalMedium * 100) : 0;
+      const hardPct   = d.totalHard   ? (d.hardSolved   / d.totalHard   * 100) : 0;
+      animBar(elEasyBar, easyPct);
+      animBar(elMedBar,  medPct);
+      animBar(elHardBar, hardPct);
+
+      elLoading.style.display = 'none';
+      elBody.style.display    = 'block';
+      elDot.className = 'lc-status-dot live';
+    } catch {
+      setError();
+    }
+  }
+
+  // Load default on init
+  fetchStats(DEFAULT_USERNAME);
+
+  // Manual fetch via input
+  if (fetchBtn && input) {
+    fetchBtn.addEventListener('click', () => fetchStats(input.value));
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') fetchStats(input.value); });
+  }
+})();
+
+
 (function initCV() {
   const btn = document.getElementById('cv-btn');
   if (!btn) return;
