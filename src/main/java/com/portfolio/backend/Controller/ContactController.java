@@ -1,12 +1,11 @@
 package com.portfolio.backend.Controller;
-
 import com.portfolio.backend.Model.Contact;
 import com.portfolio.backend.Service.ContactService;
+import com.portfolio.backend.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/contact")
@@ -17,12 +16,10 @@ public class ContactController {
     private ContactService contactService;
 
     @PostMapping
-    public Map<String, Object> submitContact(@RequestBody Contact contact) {
+    public ApiResponse submitContact(@RequestBody Contact contact) {
         Contact saved = contactService.saveMessage(contact);
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("id", saved.getId());
-        return response;
+        String message = "Thank you " + contact.getName() + "! Your message has been received.";
+        return new ApiResponse(message, 200);
     }
 
     @GetMapping("/all")
@@ -31,9 +28,8 @@ public class ContactController {
     }
 
     @GetMapping("/count")
-    public Map<String, Long> getCount() {
-        Map<String, Long> response = new HashMap<>();
-        response.put("count", contactService.getMessageCount());
-        return response;
+    public ApiResponse getCount() {
+        long count = contactService.getMessageCount();
+        return new ApiResponse("Total messages: " + count, 200);
     }
 }
