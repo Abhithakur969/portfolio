@@ -298,25 +298,53 @@ function closeMobileMenu() {
   if (!form || !fb) return;
   form.addEventListener('submit', e => {
     e.preventDefault();
-    fb.textContent = '✓ Message sent! I\'ll get back to you soon.';
-    fb.style.color = 'var(--green)';
-    form.reset();
-    setTimeout(() => { fb.textContent = ''; }, 5000);
-  });
-})();
+    setFormLocked(true);
+    Swal.fire({
+      title: 'Sending...',
+      text: 'Please wait a moment',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+      background: '#080d16',
+      color: '#d0dcea'
+    });
 
+    const data = {
+      name: document.getElementById('fc-name').value,
+      email: document.getElementById('fc-email').value,
+      message: document.getElementById('fc-message').value
+    };
 
-/* ── CV DOWNLOAD ─────────────────────── */
-(function () {
-  const btn = document.getElementById('cv-btn');
-  if (!btn) return;
-  // If the href is a real PDF, the browser handles download natively.
-  // This just gives visual feedback.
-  btn.addEventListener('click', () => {
-    const span = btn.querySelector('span');
-    if (!span) return;
-    const orig = span.textContent;
-    span.textContent = '⏳ Preparing…';
-    setTimeout(() => { span.textContent = orig; }, 1600);
+    try {
+      const response = await fetch('https://portfolio-yg2a.onrender.com/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const result = await response.json();
+      Swal.fire({
+        icon: 'success',
+        title: 'Message Sent!',
+        text: result.message || 'Thanks for reaching out. I will reply soon.',
+        background: '#080d16',
+        color: '#d0dcea',
+        confirmButtonColor: '#63d7ff'
+      });
+      form.reset();
+      fb.textContent = '';
+    } catch (error) {
+      console.error('Form submit error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Delivery Failed',
+        text: 'Could not send message. Please email me directly at abhishekthakur99050@gmail.com',
+        background: '#080d16',
+        color: '#d0dcea',
+        confirmButtonColor: '#63d7ff'
+      });
+      fb.textContent = 'Server error – please try again later';
+    } finally {
+      setFormLocked(false);
+    }
   });
 })();
