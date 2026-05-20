@@ -296,7 +296,7 @@ function closeMobileMenu() {
   const form = document.getElementById('contact-form');
   const fb   = document.getElementById('form-feedback');
   if (!form || !fb) return;
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     setFormLocked(true);
     Swal.fire({
