@@ -1905,6 +1905,31 @@ footer {
   .certs-grid,
   .projects-grid {
     grid-template-columns: 1fr;
+    gap: 24px; /* added gap for better spacing */
+  }
+
+  /* === FIX FOR PROJECT IMAGES ON MOBILE === */
+  .project-card {
+    width: 100%;
+  }
+  .proj-thumb {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+  }
+  .proj-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* full image visible, no crop */
+    object-position: center;
+    background-color: var(--s2);
+  }
+  .proj-body {
+    padding: 20px;
+  }
+  .proj-name {
+    font-size: 1.3rem;
   }
 
   footer {
@@ -1941,5 +1966,16 @@ footer {
   }
   .hero-title {
     font-size: 3.2rem;
+  }
+  /* Extra small project tweaks */
+  .proj-tags span {
+    font-size: 0.6rem;
+    padding: 3px 8px;
+  }
+  .proj-desc {
+    font-size: 0.8rem;
+  }
+  .proj-name {
+    font-size: 1.2rem;
   }
 }
